@@ -7,23 +7,23 @@ namespace examples
 /-
 Following the pattern of monoids, the base class introduces notation, and is subclassed to add the axioms of the structure:
 -/
--- Adapted from `algebra/group/defs.lean:47`
+-- Adapted from `algebra/group/defs.lean:52`
 class has_scalar (α β : Type*) :=
 (smul : α → β → β)
-infix • := has_scalar.smul
+infix (name := smul') • := has_scalar.smul
 
--- Adapted from `group_theory/group_action/defs.lean:85`
+-- Adapted from `group_theory/group_action/defs.lean:89`
 class mul_action (M A : Type*) [monoid M] extends has_scalar M A :=
 (one_smul : ∀ (x : A), (1 : M) • x = x)
 (mul_smul : ∀ (r s : M) (x : A), (r * s) • x = r • (s • x))
 
--- Adapted from `group_theory/group_action/defs.lean:446`
+-- Adapted from `group_theory/group_action/defs.lean:646`
 class distrib_mul_action (M A : Type*) [monoid M] [add_monoid A]
   extends mul_action M A :=
 (smul_add : ∀ (r : M) (x y : A), r • (x + y) = r • x + r • y)
 (smul_zero : ∀ (r : M), r • (0 : A) = 0)
 
--- Adapted from `algebra/module/basic.lean:50`
+-- Adapted from `algebra/module/basic.lean:51`
 class module (R M : Type*) [semiring R] [add_comm_monoid M]
   extends distrib_mul_action R M :=
 (add_smul : ∀ (r s : R) (x : M), (r + s) • x = r • x + s • x)
@@ -61,7 +61,7 @@ since each `add_comm_monoid M` has a natural `module ℕ M` structure given by t
 A final way to resolve dangerous instances is to remove the \lstinline{instance} keyword so that it does not participate in synthesis.
 \mathlib takes this approach when stating the theorem that any module over a ring has additive inverses:
 -/
--- Adapted from `algebra/module/basic.lean:170`
+-- Adapted from `algebra/module/basic.lean:176`
 def module.add_comm_monoid_to_add_comm_group (R M : Type*)
   [ring R] [add_comm_monoid M] [module R M] :
   add_comm_group M :=

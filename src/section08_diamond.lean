@@ -23,7 +23,7 @@ Instead, \mathlib adds extra data to \lstinline{add_comm_monoid}'s ancestor \lst
 a field `nsmul : ℕ → M → M` defines scalar multiplication by a natural number,
 and two proof fields assert it (propositionally) equals the left-recursive definition:
 -/
--- Adapted from `algebra/group/defs.lean:374`
+-- Adapted from `algebra/group/defs.lean:459`
 class add_monoid (M : Type*) extends add_semigroup M, add_zero_class M :=
 (nsmul : ℕ → M → M)
 (nsmul_zero : ∀ x, nsmul 0 x = 0)

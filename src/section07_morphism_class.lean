@@ -1,7 +1,7 @@
 -- Boilerplate:
-import algebra.algebra.basic
+import algebra.algebra.equiv
 import algebra.big_operators.basic
-import data.equiv.ring
+import algebra.ring.equiv
 namespace examples
 open_locale big_operators
 
@@ -9,18 +9,18 @@ open_locale big_operators
 The `is_ring_hom` predicate stated `f} preserves the ring operations `*`, `+`, `1` and `0`.
 Instances were available for the common operations, except composition:
 -/
--- Adapted from `deprecated/group.lean:77`
+-- Adapted from `deprecated/group.lean:86`
 class is_monoid_hom {M N : Type*} [monoid M] [monoid N] (f : M → N) : Prop :=
 (map_mul : ∀ x y : M, f (x * y) = f x * f y)
 (map_one : f 1 = 1)
 
--- Adapted from `deprecated/ring.lean:64`
+-- Adapted from `deprecated/ring.lean:70`
 class is_ring_hom {R S : Type*} [semiring R] [semiring S] (f : R → S)
-  extends is_monoid_hom f :=
+  extends is_monoid_hom f : Prop :=
 (map_add : ∀ x y : R, f (x + y) = f x + f y)
 (map_zero : f 0 = 0)
 
--- Adapted from `deprecated/ring.lean:93`
+-- Adapted from `deprecated/ring.lean:99`
 instance id.is_ring_hom (R : Type*) [semiring R] :
   is_ring_hom (id : R → R) :=
 { map_mul := λ _ _, rfl,
@@ -28,7 +28,7 @@ instance id.is_ring_hom (R : Type*) [semiring R] :
   map_add := λ _ _, rfl,
   map_zero := rfl }
 
--- Adapted from `deprecated/ring.lean:97`
+-- Adapted from `deprecated/ring.lean:103`
 lemma comp.is_ring_hom {R S T : Type*} (f : R → S) (g : S → T)
   [semiring R] [semiring S] [semiring T] [hf : is_ring_hom f] [hg : is_ring_hom g] :
   is_ring_hom (g ∘ f) :=
@@ -45,30 +45,30 @@ namespace bundled
 /-
 For these reasons, \mathlib was refactored to prefer bundled morphisms:
 -/
--- Adapted from `algebra/group/hom.lean:248`
+-- Adapted from `algebra/hom/group.lean:285`
 structure monoid_hom (M N : Type*) [monoid M] [monoid N] :=
 (to_fun : M → N)
 (map_mul : ∀ x y, to_fun (x * y) = to_fun x * to_fun y)
 (map_one : to_fun 1 = 1)
 
--- Adapted from `algebra/ring/basic.lean:329`
+-- Adapted from `algebra/hom/ring.lean:257`
 structure ring_hom (R S : Type*) [semiring R] [semiring S]
   extends monoid_hom R S :=
 {map_add : ∀ x y, to_fun (x + y) = to_fun x + to_fun y}
 (map_zero : to_fun 0 = 0)
 
--- Adapted from `algebra/group/hom.lean:406`
+-- Adapted from `algebra/hom/group.lean:474`
 instance monoid_hom.has_coe_to_fun (M N : Type*) [monoid M] [monoid N] :
   has_coe_to_fun (monoid_hom M N) (λ _, M → N) :=
 { coe := monoid_hom.to_fun }
 
--- Adapted from `algebra/group/hom.lean:661`
+-- Adapted from `algebra/hom/group.lean:783`
 def monoid_hom.id (M : Type*) [monoid M] : monoid_hom M M :=
 { to_fun := id,
   map_one := rfl,
   map_mul := λ _ _, rfl }
 
--- Adapted from `algebra/group/hom.lean:688`
+-- Adapted from `algebra/hom/group.lean:810`
 def monoid_hom.comp {M N O : Type*} [monoid M] [monoid N] [monoid O]
   (f : monoid_hom M N) (g : monoid_hom N O) : monoid_hom M O :=
 { to_fun := g ∘ f,
@@ -78,18 +78,18 @@ def monoid_hom.comp {M N O : Type*} [monoid M] [monoid N] [monoid O]
 /-
 [T]he additive group endomorphism of a ring given by multiplying by a constant \lstinline{c}:
 -/
--- Adapted from `deprecated/group.lean:71`
+-- Adapted from `deprecated/group.lean:80`
 class is_add_monoid_hom {M N : Type*} [add_monoid M] [add_monoid N] (f : M → N) : Prop :=
 (map_add : ∀ x y : M, f (x + y) = f x + f y)
 (map_zero : f 0 = 0)
 
--- Adapted from `deprecated/group.lean:166`
+-- Adapted from `deprecated/group.lean:179`
 instance mul.is_add_monoid_hom {R : Type*} [ring R] (c : R) :
   is_add_monoid_hom ((*) c) :=
 { map_zero := mul_zero c,
   map_add := mul_add c }
 
--- Adapted from `algebra/ring/basic.lean:303`
+-- Adapted from `algebra/ring/basic.lean:54`
 def add_monoid_hom.mul_left {R : Type*} [ring R] (c : R) :
   add_monoid_hom R R :=
 { to_fun := (*) c,
@@ -102,38 +102,38 @@ end bundled
 /-
 Thus \mathlib ended up with many copies of lemmas such as `map_prod`:
 -/
--- Adapted from `algebra/big_operators/basic.lean:111`
+-- Adapted from `algebra/big_operators/basic.lean:130`
 lemma monoid_hom.map_prod {ι M N : Type*} (s : finset ι) (f : ι → M) [comm_monoid M] [comm_monoid N]
   (g : monoid_hom M N) :
   g (∏ i in s, f i) = ∏ i in s, g (f i) :=
 by simp only [finset.prod_eq_multiset_prod, g.map_multiset_prod, multiset.map_map]
 
--- Adapted from `algebra/big_operators/basic.lean:144`
+-- Adapted from `algebra/big_operators/basic.lean:172`
 lemma ring_hom.map_prod {ι R S : Type*} (s : finset ι) (f : ι → R) [comm_semiring R] [comm_semiring S]
   (g : ring_hom R S) :
   g (∏ i in s, f i) = ∏ i in s, g (f i) :=
 monoid_hom.map_prod s f g.to_monoid_hom
 
--- Adapted from `algebra/big_operators/basic.lean:116`
+-- Adapted from `algebra/big_operators/basic.lean:136`
 lemma mul_equiv.map_prod {ι M N : Type*} (s : finset ι) (f : ι → M) [comm_monoid M] [comm_monoid N]
   (g : mul_equiv M N) :
   g (∏ i in s, f i) = ∏ i in s, g (f i) :=
 monoid_hom.map_prod s f g.to_monoid_hom
 
--- Adapted from `data/equiv/ring.lean:386`
+-- Adapted from `algebra/big_operators/ring_equiv.lean:40`
 lemma ring_equiv.map_prod {ι R S : Type*} (s : finset ι) (f : ι → R) [comm_semiring R] [comm_semiring S]
   (g : ring_equiv R S) :
   g (∏ i in s, f i) = ∏ i in s, g (f i) :=
 monoid_hom.map_prod s f g.to_monoid_hom
 
--- Adapted from `algebra/algebra/basic.lean:704`
+-- Adapted from `algebra/algebra/hom.lean:287`
 lemma alg_hom.map_prod {ι R A B : Type*} (s : finset ι) (f : ι → A) [comm_semiring R]
   [comm_semiring A] [comm_semiring B] [algebra R A] [algebra R B]
   (g : alg_hom R A B) :
   g (∏ i in s, f i) = ∏ i in s, g (f i) :=
 ring_hom.map_prod s f g.to_ring_hom
 
--- Adapted from `algebra/algebra/basic.lean:1142`
+-- Adapted from `algebra/algebra/equiv.lean:484`
 lemma alg_equiv.map_prod {ι R A B : Type*} (s : finset ι) (f : ι → A) [comm_semiring R]
   [comm_semiring A] [comm_semiring B] [algebra R A] [algebra R B]
   (g : alg_equiv R A B) :
@@ -152,7 +152,7 @@ based on Eric Wieser's `set_like` class for types of bundled subobjects. (https:
 class has_coe_to_fun' (F : Type*) (α : out_param (F → Type*)) :=
 (coe : Π x : F, α x)
 
--- Adapted from `data/fun_like/basic.lean:127`
+-- Adapted from `data/fun_like/basic.lean:140`
 class fun_like (F : Type*)
   (α : out_param Type*) (β : out_param (α → Type*))
   extends has_coe_to_fun F (λ _, Π a : α, β a) :=
@@ -167,13 +167,13 @@ instance monoid_hom.fun_like {M N : Type*} [monoid M] [monoid N] :
 The next step in addressing the duplication is to introduce a class for
 the bundled morphism types that coerce to `monoid_hom`:
 -/
--- Adapted from `algebra/group/hom.lean:260`
+-- Adapted from `algebra/hom/group.lean:298`
 class monoid_hom_class (F : Type*) (M N : out_param Type*)
   [monoid M] [monoid N] extends fun_like F M (λ _, N) :=
 (map_one : ∀ (f : F), f 1 = 1)
 (map_mul : ∀ (f : F) (x y : M), f (x * y) = f x * f y)
 
--- Adapted from `algebra/group/hom.lean:265`
+-- Adapted from `algebra/hom/group.lean:303`
 instance monoid_hom.monoid_hom_class {M N : Type*} [monoid M] [monoid N] :
   monoid_hom_class (monoid_hom M N) M N :=
 { coe := monoid_hom.to_fun,
@@ -185,14 +185,14 @@ instance monoid_hom.monoid_hom_class {M N : Type*} [monoid M] [monoid N] :
 The types such as \lstinline{ring_hom} extending \lstinline{monoid_hom} should receive a \lstinline{monoid_hom_class} instance,
 which we can do by subclassing \lstinline{monoid_hom_class} and instantiating the subclass:
 -/
--- Adapted from `algebra/ring/basic.lean:354`
+-- Adapted from `algebra_hom_ring.lean:286`
 class ring_hom_class (F : Type*) (R S : out_param Type*)
   [semiring R] [semiring S]
   extends monoid_hom_class F R S :=
 (map_zero : ∀ (f : F), f 0 = 0)
 (map_add : ∀ (f : F) (x y : R), f (x + y) = f x + f y)
 
--- Adapted from `algebra/ring/basic.lean:382`
+-- Adapted from `algebra/ring/basic.lean:317`
 instance ring_hom.ring_hom_class {R S : Type*} [semiring R] [semiring S] :
   ring_hom_class (ring_hom R S) R S :=
 { coe := ring_hom.to_fun,

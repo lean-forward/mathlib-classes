@@ -7,7 +7,7 @@ A basic example is the definition of the multiplication operator `*` in core Lea
 -/
 -- Adapted from `library/init/core.lean:301`
 class has_mul (α : Type*) := (mul : α → α → α)
-infix * := has_mul.mul
+infix (name := mul') * := has_mul.mul
 /-
 [T]he `has_inv` class providing `⁻¹` notation for the multiplicative inverse does not have any fields requiring a multiplicative group structure.
 -/

@@ -1,6 +1,6 @@
 -- Boilerplate:
 import algebra.group.basic
-import algebra.pointwise
+import data.set.pointwise.basic
 import data.int.basic
 open has_add has_neg
 namespace examples
@@ -32,7 +32,7 @@ For example, the subsets of a monoid form a monoid under pointwise operations, w
 -/
 open set
 
--- Adapted from `algebra/pointwise.lean:241`
+-- Adapted from `data/set/pointwise/basic.lean:443`
 instance pointwise_monoid {A : Type*} [monoid A] : monoid (set A) :=
 { mul := image2 has_mul.mul,
   mul_assoc := λ _ _ _, set.image2_assoc mul_assoc,
@@ -47,7 +47,7 @@ Class definitions
 /-
 Thus, a definition for `add_group` could look like:
 -/
--- Adapted from `algebra/group/defs.lean:607`
+-- Adapted from `algebra/group/defs.lean:833`
 class add_group (A : Type*) :=
 (zero : A) (neg : A → A) (add : A → A → A)
 (add_assoc : ∀ (x y z : A), add x (add y z) = add (add x y) z)
@@ -72,7 +72,7 @@ To define abelian groups as a subclass of additive groups, we write
 namespace unbundled
 open examples.add_group
 
--- Adapted from `algebra/group/defs.lean:668`
+-- Adapted from `algebra/group/defs.lean:907`
 class add_comm_group (A : Type*) [add_group A] :=
 (add_comm : ∀ (x y : A), add x y = add y x)
 end unbundled
@@ -100,7 +100,7 @@ Extensions of the typeclass pattern
 /-
 For example, \mathlib uses a typeclass parametrized over a natural number $p$ to express the characteristic of a ring:
 -/
--- Adapted from `algebra/char_p/basic.lean:21`
+-- Adapted from `algebra/char_p/basic.lean:96`
 class char_p (R : Type*) [semiring R] (p : ℕ) : Prop :=
 (cast_eq_zero_iff : ∀ (x : ℕ), (coe x : R) = 0 ↔ p ∣ x)
 

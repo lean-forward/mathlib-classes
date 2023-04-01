@@ -79,16 +79,16 @@ The `fails_quickly` linter can also detect timeouts caused by looping or divergi
 for example the loop `nonempty → has_bot → nonempty` in the following code:
 -/
 
--- Adapted from `order/bounded_order.lean:54`
+-- Adapted from `order/bounded_order.lean:47`
 -- `has_bot.bot` is notation for the minimum element of `α`
 class has_bot (α : Type*) := (bot : α)
 
--- Adapted from `order/bounded_order.lean:60`
+-- Adapted from `order/bounded_order.lean:53`
 instance has_bot_nonempty (α : Type*) [has_bot α] : nonempty α :=
 ⟨has_bot.bot⟩
 
 -- The natural numbers are well-ordered so each nonempty subtype has a bottom element.
--- Adapted from `data/nat/basic.lean:106`
+-- Adapted from `data/nat/order/lemmas.lean:29`
 instance nat.subtype.has_bot (s : set ℕ) [decidable_pred (∈ s)] [h : nonempty s] :
   has_bot s :=
 { bot := ⟨nat.find (nonempty_subtype.1 h), nat.find_spec (nonempty_subtype.1 h)⟩ }
@@ -99,7 +99,7 @@ end fails_quickly
 
 section priority
 
--- Adapted from `group_theory/congruence.lean:209`
+-- Adapted from `group_theory/congruence.lean:215`
 @[priority 500] -- Reduce the priority from 1000 to 500 since it's slow to apply.
 instance con.quotient.decidable_eq {M : Type*} [has_mul M] (c : con M)
   [d : ∀ (a b : M), decidable (c a b)] : decidable_eq (con.quotient c) :=

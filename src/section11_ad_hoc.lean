@@ -14,7 +14,7 @@ and take an instance of this class as a parameter of the `zmod.field` instance:
 class nat.prime (n : ℕ) : Prop :=
 (nontrivial : 2 ≤ n) (only_two_divisors : ∀ m ∣ n, m = 1 ∨ m = n)
 
--- Adapted from `data/zmod/basic.lean:74`
+-- Adapted from `data/zmod/defs.lean:78`
 def zmod' : ℕ → Type
 | 0     := ℤ
 | (n+1) := fin (n+1)
@@ -23,7 +23,7 @@ def zmod' : ℕ → Type
 instance (n : ℕ) [h : nat.prime n] : fact (n.prime) :=
 ⟨nat.prime_def_lt.mpr ⟨h.nontrivial, λ m lt dvd, (nat.prime.only_two_divisors m dvd).resolve_right lt.ne⟩⟩
 
--- Adapted from `data/zmod/basic.lean:836`
+-- Adapted from `data/zmod/basic.lean:984`
 instance zmod.field (n : ℕ) [nat.prime n] : field (zmod n) :=
 { mul_inv_cancel := begin
     intros a h,
@@ -45,17 +45,17 @@ namespace fact
 Instead \mathlib provides a mechanism for ad hoc typeclass creation,
 by supplying a proposition to the `fact` class:
 -/
--- Adapted from `data/nat/prime.lean:39`
+-- Adapted from `data/nat/prime.lean:46`
 def nat.prime (n : ℕ) : Prop := 2 ≤ n ∧ (∀ m ∣ n, m = 1 ∨ m = n)
 
--- Adapted from `logic/basic.lean:191`
+-- Adapted from `logic/basic.lean:205`
 class fact' (p : Prop) : Prop := (out : p)
 
 -- Adapt the definition of `nat.prime` so we don't need to copy the implementation of `zmod`:
 instance (n : ℕ) [h : fact (nat.prime n)] : fact (n.prime) :=
 ⟨nat.prime_def_lt.mpr ⟨(fact.out (nat.prime n)).1, λ m lt dvd, ((fact.out (nat.prime n)).2 m dvd).resolve_right lt.ne⟩⟩
 
--- Adapted from `data/zmod/basic.lean:836`
+-- Adapted from `data/zmod/basic.lean:984`
 instance zmod.field (n : ℕ) [fact (nat.prime n)] : field (zmod n) :=
 { mul_inv_cancel := begin
     intros a h,
